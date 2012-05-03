@@ -14,8 +14,9 @@ class Admin extends Admin_Controller {
 		$this->lang->load('wp');
 
 		// We'll set the partials and metadata here since they're used everywhere
-		$this->template->append_js('module:admin.js'));
-		$this->template->append_css('module:admin.css'));
+		// $this->template->append_js('module:admin.js');
+		// $this->template->append_css('module:admin.css');
+		$this->template->append_metadata(js('admin.js', 'wp'))->append_metadata(css('admin.css', 'wp'));
 	}
 
 	public function index() {

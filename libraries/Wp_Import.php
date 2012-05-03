@@ -35,11 +35,13 @@ class Wp_Import {
 				'slug' => (string) $val->category_nicename,
 				'title' => (string) $val->cat_name
 			);
-		}		
-		if($this->ci->db->insert_batch('default_blog_categories', $categories)) {
-			return true;
-		} else {
-			return false;
+		}
+		if(!empty($categories)) {
+			if($this->ci->db->insert_batch('default_blog_categories', $categories)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	
 	}
@@ -51,18 +53,23 @@ class Wp_Import {
 				'name' => (string) $val->tag_name
 			);
 		}
-		if($this->ci->db->insert_batch('default_keywords', $tags)) {
-			return true;
-		} else {
-			return false;
+		if(!empty($tags)) {
+			if($this->ci->db->insert_batch('default_keywords', $tags)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	
 	}
 	
 	public function posts($xml) {
-	
+		
+		// Defaults
+		$posts = array();
+		
 		foreach ($xml->channel->item as $val) {
-			
+		
 			$slug = (string) $val->post_name;
 						
 			$comments_enabled = 0;
@@ -79,6 +86,7 @@ class Wp_Import {
 			if((string) $val->content != "" && (string) $val->post_type == "post" && (string) $val->status == "publish") {
 				
 				// Get a category slug
+				$category_slug = "";
 				foreach($val->category as $cat) {
 					$category_slug = "";
 					if($cat[0]['domain'] == 'category') {
@@ -89,12 +97,14 @@ class Wp_Import {
 				
 				// Query the ID of this posts's category slug
 				$category_id = 0;
-				$this->ci->db->where('slug',$category_slug);
-				$this->ci->db->limit(1);
-				$query = $this->ci->db->get('default_blog_categories');
-				if($query->num_rows() > 0) {
-					foreach ($query->result() as $row) {
-						$category_id = $row->id;
+				if($category_slug != "") {
+					$this->ci->db->where('slug',$category_slug);
+					$this->ci->db->limit(1);
+					$query = $this->ci->db->get('default_blog_categories');
+					if($query->num_rows() > 0) {
+						foreach ($query->result() as $row) {
+							$category_id = $row->id;
+						}
 					}
 				}
 				
@@ -226,6 +236,8 @@ class Wp_Import {
 				'email' => (string) $val->author_email,
 				'password' => md5((string)$val->author_email.$rand.time()),
 				'salt' => $rand,
+				'group_id' => 1,
+				'active' => 1,
 				'created_on' => time(),
 				'last_login' => 0,
 				'username' => (string) $val->author_login
@@ -234,7 +246,16 @@ class Wp_Import {
 			$this->ci->db->or_where('email',(string) $val->author_email);
 			$query = $this->ci->db->get('default_users');
 			if($query->num_rows() == 0) {
-				$this->ci->db->insert('default_users',$user);
+				$this->ci->db->insert('users',$user);
+				$user_id = $this->ci->db->insert_id();
+				$profile = array(
+					'user_id' => $user_id,
+					'display_name' => (string) $val->author_display_name,
+					'first_name' => '[first_name]',
+					'last_name' => '[last_name]',
+					'lang' => 'en'
+				);
+				$this->ci->db->insert('default_profiles',$profile);
 			}
 		}
 	
