@@ -27,7 +27,7 @@ class Wp_Import {
 		}
 		
 	}
-
+	
 	public function categories($xml) {
 		
 		foreach ($xml->channel->category as $val) {
@@ -59,7 +59,7 @@ class Wp_Import {
 	
 	}
 	
-	public function posts($xml) { // This returns the comments for each post, which will be imported
+	public function posts($xml) {
 	
 		foreach ($xml->channel->item as $val) {
 			
@@ -207,5 +207,37 @@ class Wp_Import {
 		}
 		
 	} // end comments method
-
+	
+	public function users($xml) {
+		
+		// Move this function to a helper
+		function randString($length, $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
+			$str = '';
+			$count = strlen($charset);
+			while ($length--) {
+				$str .= $charset[mt_rand(0, $count-1)];
+			}
+			return $str;
+		}
+	
+		foreach ($xml->channel->author as $val) {
+			$rand = randString(6);
+			$user = array(
+				'email' => (string) $val->author_email,
+				'password' => md5((string)$val->author_email.$rand.time()),
+				'salt' => $rand,
+				'created_on' => time(),
+				'last_login' => 0,
+				'username' => (string) $val->author_login
+			);
+			$this->ci->db->where('username',(string) $val->author_login);
+			$this->ci->db->or_where('email',(string) $val->author_email);
+			$query = $this->ci->db->get('default_users');
+			if($query->num_rows() == 0) {
+				$this->ci->db->insert('default_users',$user);
+			}
+		}
+	
+	}
+			
 }

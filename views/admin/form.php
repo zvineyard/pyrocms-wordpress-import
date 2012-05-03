@@ -19,7 +19,7 @@
 		</div>
 		
 		<div class="buttons">
-			<?php $this->load->view('admin/partials/buttons', array('buttons' => array('save', 'cancel') )); ?>
+			<?php $this->load->view('admin/partials/buttons', array('buttons' => array('upload', 'cancel') )); ?>
 		</div>
 		
 	<?php echo form_close(); ?>
