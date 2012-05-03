@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Module_WordPressImport extends Module {
+class Module_pyro_wordpress_import extends Module {
 
 	public $version = '1.0';
 
