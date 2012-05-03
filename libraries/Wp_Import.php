@@ -76,7 +76,7 @@ class Wp_Import {
 			}
 			
 			// Get content, category, and tags for every post
-			if((string) $val->content != "" && (string) $val->post_type == "post") {
+			if((string) $val->content != "" && (string) $val->post_type == "post" && (string) $val->status == "publish") {
 				
 				// Get a category slug
 				foreach($val->category as $cat) {

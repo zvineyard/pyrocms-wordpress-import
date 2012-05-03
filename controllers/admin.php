@@ -14,7 +14,8 @@ class Admin extends Admin_Controller {
 		$this->lang->load('wp');
 
 		// We'll set the partials and metadata here since they're used everywhere
-		$this->template->append_metadata(js('admin.js', 'wp'))->append_metadata(css('admin.css', 'wp'));
+		$this->template->append_js('module:admin.js'));
+		$this->template->append_css('module:admin.css'));
 	}
 
 	public function index() {
@@ -28,7 +29,7 @@ class Admin extends Admin_Controller {
 	
 	public function upload() {
 	
-		$config['upload_path'] = 'uploads/default/wp';
+		$config['upload_path'] = 'uploads/'.SITE_REF.'/wp';
 		$config['allowed_types'] = 'xml';
 		$config['max_size']	= '5000';
 		$config['remove_spaces'] = true; 
