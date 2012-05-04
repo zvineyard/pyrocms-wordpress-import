@@ -26,6 +26,8 @@ Step 4: Watch the magic happen.
 
 This module does not currently import pages form a WordPress site into PyroCMS. That feature will be part of the next release.
 
+This module does not currently transfer draft posts from WordPress to PyroCMS.
+
 This module does not copy images from WordPress posts or pages.
 
 Running the import process more than once will throw SQL errors if the following tables aren't empty: default_blog, default_blog_categories, default_comments, default_keywords, default_keywords_applied.

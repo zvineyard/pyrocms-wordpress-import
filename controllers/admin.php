@@ -3,7 +3,7 @@
  * This is a sample module for PyroCMS
  *
  * @author 		Zac Vineyard
- * @website		http://acvineyard.com
+ * @website		http://zacvineyard.com
  * @package 	PyroCMS
  * @subpackage 	WordPress Import Module
  */
