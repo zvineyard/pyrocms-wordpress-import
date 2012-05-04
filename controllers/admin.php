@@ -9,27 +9,25 @@
  */
 class Admin extends Admin_Controller {
 
-	public function __construct() {
+	public function __construct()
+	{
 		parent::__construct();
 		$this->lang->load('wp');
 
 		// We'll set the partials and metadata here since they're used everywhere
-		// $this->template->append_js('module:admin.js');
-		// $this->template->append_css('module:admin.css');
-		$this->template->append_metadata(js('admin.js', 'wp'))->append_metadata(css('admin.css', 'wp'));
+		$this->template->append_js('module:admin.js');
+		$this->template->append_css('module:admin.css');
 	}
 
-	public function index() {
-	
-		//print_r($this->module_details);
-		//die();
-		
-		$this->template->title($this->module_details['name'])->build('admin/form');
-
+	public function index() 
+	{
+		$this->template
+			->title($this->module_details['name'])
+			->build('admin/form');
 	}
 	
-	public function upload() {
-	
+	public function upload()
+	{
 		$config['upload_path'] = 'uploads/'.SITE_REF.'/wp';
 		$config['allowed_types'] = 'xml';
 		$config['max_size']	= '5000';
@@ -38,10 +36,13 @@ class Admin extends Admin_Controller {
 
 		$this->load->library('upload', $config);
 
-		if (!$this->upload->do_upload()) {
+		if ( ! $this->upload->do_upload()) 
+		{
 			$this->session->set_flashdata('error', 'Your WordPress file could not be uploaded uploaded!');
 			redirect('admin/'.$this->module_details['slug']);
-		} else {
+		}
+		else
+		{
 			$data = $this->upload->data();
 			$this->session->set_flashdata('success', 'Your WordPress file was uploaded!');
 			redirect('admin/'.$this->module_details['slug'].'/parse/'.$data['file_name']);
@@ -49,19 +50,23 @@ class Admin extends Admin_Controller {
 		
 	}
 	
-	public function get_filtered_xml($file) {
-	
-		$xml = file_get_contents('uploads/default/wp/'.$file);
-		$xml = str_replace('content:encoded','content',$xml);
-		$xml = str_replace('excerpt:encoded','excerpt',$xml);
-		$xml = str_replace('wp:','',$xml);		
-		$xml = simplexml_load_string($xml);
-		return $xml;
+	public function get_filtered_xml($file)
+	{
+		$xml = file_get_contents('uploads/'.SITE_REF.'/wp/'.$file);
 		
+		return simplexml_load_string(str_replace(array(
+			'content:encoded',
+			'excerpt:encoded',
+			'wp',
+		), array(
+			'content',
+			'excerpt',
+			'',
+		), $xml));
 	}
 	
-	public function parse($file) {
-					
+	public function parse($file) 
+	{
 		set_time_limit(0);
 				
 		// Defaults
@@ -75,9 +80,13 @@ class Admin extends Admin_Controller {
 		
 		// Check for duplicate post titles
 		$titles = $this->wp_import->has_duplicate_titles($xml);
-		if($titles) {
-			$this->data->items =& $titles;
-			$this->template->title($this->module_details['name'])->build('admin/duplicates',$this->data);
+		
+		if ($titles)
+		{
+			$this->template
+				->title($this->module_details['name'])
+				->set('items', $titles)
+				->build('admin/duplicates');
 			return;
 		}
 		

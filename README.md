@@ -12,11 +12,15 @@ Import your exisiting WordPress site into PyroCMS.
 
 Please Note: It is best to only use this module with a new (content free) instance of PyroCMS.
 
-Step 1: Login to your WordPress admin panel and export your WordPress site to an XML file using the WordPress export tool.
+Step 1: Extract contents of this zip to a new folder:
 
-Step 2: Upload that XML file using the PyroCMS WordPress Import Module.
+	addons/<site-ref>/modules/wordpress_import
 
-Step 3: Watch the magic happen.
+Step 2: Login to your WordPress admin panel and export your WordPress site to an XML file using the WordPress export tool.
+
+Step 3: Upload that XML file using the PyroCMS WordPress Import Module.
+
+Step 4: Watch the magic happen.
 
 ## Known Issues
 
