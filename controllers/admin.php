@@ -7,16 +7,12 @@
  * @package 	PyroCMS
  * @subpackage 	WordPress Import Module
  */
-class Admin extends Admin_Controller {
-
+class Admin extends Admin_Controller
+{
 	public function __construct()
 	{
 		parent::__construct();
 		$this->lang->load('wp');
-
-		// We'll set the partials and metadata here since they're used everywhere
-		$this->template->append_js('module:admin.js');
-		$this->template->append_css('module:admin.css');
 	}
 
 	public function index() 
@@ -57,7 +53,7 @@ class Admin extends Admin_Controller {
 		return simplexml_load_string(str_replace(array(
 			'content:encoded',
 			'excerpt:encoded',
-			'wp',
+			'wp:',
 		), array(
 			'content',
 			'excerpt',
@@ -107,7 +103,10 @@ class Admin extends Admin_Controller {
 		
 		// Import Pages
 		// Still needed $this->wp_import->pages($xml);
-				
+		
+		$this->session->set_flashdata('success', 'The WordPress file has been successfully imported.');
+
+		redirect('admin/wordpress_import');
 	}
 
 }

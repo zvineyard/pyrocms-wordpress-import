@@ -72,15 +72,9 @@ class Wp_Import {
 		
 			$slug = (string) $val->post_name;
 						
-			$comments_enabled = 0;
-			if($val->comment_status == 'open') {
-				$comments_enabled = 1;
-			}
+			$comments_enabled = ($val->comment_status == 'open');
 			
-			$status = 'live';
-			if($val->status != 'publish') {
-				$status = 'draft';
-			}
+			$status = ($val->status === 'publish') ? 'live' : 'draft';
 			
 			// Get content, category, and tags for every post
 			if((string) $val->content != "" && (string) $val->post_type == "post" && (string) $val->status == "publish") {

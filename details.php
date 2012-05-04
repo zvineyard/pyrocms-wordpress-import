@@ -21,7 +21,7 @@ class Module_Wordpress_import extends Module
 	public function install()
 	{
 		// Make sure the folder exists and is writable
-		return is_dir($this->upload_path.'wp') or @mkdir($this->upload_path.'wp',0777,TRUE));
+		return is_dir($this->upload_path.'wp') or @mkdir($this->upload_path.'wp',0777,TRUE);
 	}
 
 	public function uninstall()
