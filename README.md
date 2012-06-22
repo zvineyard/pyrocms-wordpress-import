@@ -24,7 +24,7 @@ Step 4: Watch the magic happen.
 
 ## Known Issues
 
-While thi smodule imports pages, it doesn't not keep track of their hierarchy (parent vs. child).
+While this module imports pages, it doesn't keep track of their hierarchy (parent vs. child).
 
 This module does not currently transfer draft posts from WordPress to PyroCMS.
 
