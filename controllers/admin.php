@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * This is a sample module for PyroCMS
+ * Import your exisiting WordPress site into PyroCMS.
  *
  * @author 		Zac Vineyard
  * @website		http://zacvineyard.com
@@ -85,7 +85,7 @@ class Admin extends Admin_Controller
 				->build('admin/duplicates');
 			return;
 		}
-		
+
 		// Import Categories
 		$this->wp_import->categories($xml);
 		
@@ -100,10 +100,10 @@ class Admin extends Admin_Controller
 		
 		// Import Users
 		$this->wp_import->users($xml); // Currently only imports users who aren't already in the system
-		
+
 		// Import Pages
-		// Still needed $this->wp_import->pages($xml);
-		
+		$this->wp_import->pages($xml);
+
 		$this->session->set_flashdata('success', 'The WordPress file has been successfully imported.');
 
 		redirect('admin/wordpress_import');
