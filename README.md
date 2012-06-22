@@ -24,7 +24,7 @@ Step 4: Watch the magic happen.
 
 ## Known Issues
 
-This module does not currently import pages form a WordPress site into PyroCMS. That feature will be part of the next release.
+While thi smodule imports pages, it doesn't not keep track of their hierarchy (parent vs. child).
 
 This module does not currently transfer draft posts from WordPress to PyroCMS.
 
