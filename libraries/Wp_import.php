@@ -327,55 +327,10 @@ class Wp_Import {
 			$comments_enabled = ((string) $val->comment_status == 'open') ? 1 : 0;
 			
 			$status = ((string) $val->status == 'publish') ? 'live' : 'draft';
-			
-			// Get content, category, and tags for every post
+
+			// Get page content and other misc values
 			if((string) $val->content != "" && (string) $val->post_type == "page" && (string) $val->status == "publish")
 			{
-				
-				/*
-				if((string) $val->post_parent == 0)
-				{
-					$parent_pages[(string) $val->post_id] = array(
-						'title' => (string) $val->title,
-						'slug' => $slug,
-						'uri' => $slug,
-						'parent_id' => 0,
-						'revision_id' => 1,
-						'layout_id' => 1,
-						'meta_title' => '',
-						'meta_keywords' => '',
-						'meta_description' => '',
-						'comments_enabled' => $comments_enabled,
-						'status' => $status,
-						'created_on' => (string) strtotime($val->post_date),
-						'updated_on' => (string) strtotime($val->pubDate),
-						'is_home' => 0,
-						'strict_uri' => 1,
-						'order' => 0
-					);
-				}
-				else
-				{
-					$child_pages[(string) $val->post_parent.'-'.(string) $val->post_id] = array( // add parent page id in key
-						'title' => (string) $val->title,
-						'slug' => $slug,
-						'uri' => $slug,
-						'parent_id' => 0,
-						'revision_id' => 1,
-						'layout_id' => 1,
-						'meta_title' => '',
-						'meta_keywords' => '',
-						'meta_description' => '',
-						'comments_enabled' => $comments_enabled,
-						'status' => $status,
-						'created_on' => (string) strtotime($val->post_date),
-						'updated_on' => (string) strtotime($val->pubDate),
-						'is_home' => 0,
-						'strict_uri' => 1,
-						'order' => 0
-					);
-				}
-				*/
 
 				$pages[] = array(
 					'title' => (string) $val->title,
@@ -393,39 +348,27 @@ class Wp_Import {
 					'updated_on' => (string) strtotime($val->pubDate),
 					'is_home' => 0,
 					'strict_uri' => 1,
-					'order' => 0
+					'order' => 0,
+					'html' => nl2br((string) mb_convert_encoding($val->content,"HTML-ENTITIES","UTF-8"))
 				);
 
 			}
 			
 		}
 
-		/*
-		// Insert parents and their children
-		foreach($parent_pages as $post_id => $val_array)
+		foreach($pages as $page)
 		{
-			$this->ci->db->insert('default_pages',$val_array);
-			$pyro_page_id = $this->ci->db->insert_id();
-			foreach($child_pages as $parent_id => $val)
-			{
-				$parent_id = explode("-", $parent_id);
-				if($post_id == $parent_id[0])
-				{
-					$val['parent_id'] = $pyro_page_id;
-					$this->ci->db->insert('default_pages',$val);
-				}
-			}
-		}
-		*/
-
-		// Insert pages into the database
-		if($this->ci->db->insert_batch('default_pages', $pages))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
+			$html = $page['html'];
+			unset($page['html']);
+			$this->ci->db->insert('default_pages',$page);
+			$chunk = array(
+				'page_id' => $this->ci->db->insert_id(),
+				'body' => $html,
+				'type' => 'html',
+				'parsed' => '',
+				'sort' => 1
+			);
+			$this->ci->db->insert('default_page_chunks',$chunk);
 		}
 
 	}
