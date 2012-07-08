@@ -26,8 +26,6 @@ Step 4: Watch the magic happen.
 
 While this module imports pages, it doesn't keep track of their hierarchy (parent vs. child).
 
-Page content is not being added to the database.
-
 This module does not currently transfer draft posts from WordPress to PyroCMS.
 
 This module does not copy images from WordPress posts or pages.
