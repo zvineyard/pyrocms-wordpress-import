@@ -6,7 +6,7 @@ This module was originally written by [Zac Vineyard](http://zacvineyard.com).
 
 ## Description
 
-Import your exisiting WordPress site into PyroCMS. See the source code at [https://github.com/zvineyard/pyro_wordpress_import](https://github.com/zvineyard/pyro_wordpress_import).
+Import your exisiting WordPress site into PyroCMS. See the source code at [https://github.com/zvineyard/pyrocms-wordpress-import](https://github.com/zvineyard/pyrocms-wordpress-import).
 
 ## Usage
 
