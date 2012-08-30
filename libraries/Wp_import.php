@@ -165,8 +165,12 @@ class Wp_Import {
 							);
 						}
 					}
+
 					// Insert tags					
-					$this->ci->db->insert_batch('default_keywords_applied', $assign);
+					if(!empty($assign))
+					{
+						$this->ci->db->insert_batch('default_keywords_applied', $assign);	
+					}					
 				
 				}
 				
