@@ -85,7 +85,7 @@ class Admin extends Admin_Controller
 				->build('admin/duplicates');
 			return;
 		}
-
+	
 		// Import Categories
 		$this->wp_import->categories($xml);
 		
@@ -102,7 +102,10 @@ class Admin extends Admin_Controller
 		$this->wp_import->users($xml); // Currently only imports users who aren't already in the system
 
 		// Import Pages
-		$this->wp_import->pages($xml);
+		$this->wp_import->pages($xml);		
+
+
+		// All went well, success & redirect
 		$this->session->set_flashdata('success', 'The WordPress file has been successfully imported.');
 
 		redirect('admin/wordpress_import');
