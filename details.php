@@ -20,6 +20,10 @@ class Module_Wordpress_import extends Module
 
 	public function install()
 	{
+		// Adjust default_posts.slug column length to accept default wp slugs
+		$sql = "ALTER TABLE  `".$this->db->dbprefix('blog')."` CHANGE  `slug`  `slug` VARCHAR( 200 ) CHARACTER SET utf8 NOT NULL";
+		$this->db->query($sql);
+
 		// Make sure the folder exists and is writable
 		return is_dir($this->upload_path.'wp') or @mkdir($this->upload_path.'wp',0777,TRUE);
 	}
