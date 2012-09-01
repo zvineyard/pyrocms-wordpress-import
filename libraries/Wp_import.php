@@ -22,7 +22,7 @@ class Wp_Import {
 		{
 			if((string) $val->content != "" && (string) $val->post_type == "post" && (string) $val->status == 'publish')
 			{
-				$titles[] = (string) mb_convert_encoding($val->title,"HTML-ENTITIES", "UTF-8");
+				$titles[] = strtolower((string) mb_convert_encoding($val->title,"HTML-ENTITIES", "UTF-8"));
 			}
 		}
 		$dups = $this->get_duplicates($titles);
