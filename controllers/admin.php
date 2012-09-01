@@ -105,7 +105,7 @@ class Admin extends Admin_Controller
 		$this->wp_import->pages($xml);
 		$this->session->set_flashdata('success', 'The WordPress file has been successfully imported.');
 
-		redirect('admin/wordpress_import');
+		//redirect('admin/wordpress_import');
 	}
 
 }

@@ -39,14 +39,28 @@ class Wp_Import {
 	
 	public function categories($xml)
 	{
-		
-		foreach ($xml->channel->category as $val)
+		foreach ($xml->channel->item as $node)
+		{
+			foreach($node->category as $val)
+			{
+				if($val->attributes()->domain == "category")
+				{
+					$dirty_categories[] = (string) $val->attributes()->nicename;
+				}				
+			}
+			
+		}
+
+		$clean_categories = array_unique($dirty_categories);
+
+		foreach($clean_categories as $cat)
 		{
 			$categories[] = array(
-				'slug' => (string) $val->category_nicename,
-				'title' => (string) $val->cat_name
-			);
+					'slug' => (string) $cat,
+					'title' => (string) ucwords(str_replace('-',' ', $cat))
+				);
 		}
+		
 		if(!empty($categories))
 		{
 			if($this->ci->db->insert_batch('default_blog_categories', $categories))
@@ -58,18 +72,34 @@ class Wp_Import {
 				return false;
 			}
 		}
-	
+		
 	}
+	
 	
 	public function tags($xml)
 	{
+
+		foreach ($xml->channel->item as $node)
+		{
+			foreach($node->category as $val)
+			{
+				if($val->attributes()->domain != "category")
+				{
+					$dirty_tags[] = (string) $val->attributes()->nicename;
+				}				
+			}
+			
+		}
+
+		$clean_tags = array_unique($dirty_tags);	
 	
-		foreach ($xml->channel->tag as $val)
+		foreach ($clean_tags as $tag)
 		{
 			$tags[] = array(
-				'name' => (string) $val->tag_name
+				'name' => (string) $tag
 			);
 		}
+		
 		if(!empty($tags))
 		{
 			if($this->ci->db->insert_batch('default_keywords', $tags))
@@ -89,11 +119,12 @@ class Wp_Import {
 		
 		// Defaults
 		$posts = array();
-		
+		try{
+
 		foreach ($xml->channel->item as $val) {
 		
 			$slug = (string) $val->post_name;
-						
+
 			$comments_enabled = ($val->comment_status == 'open');
 			
 			$status = ($val->status === 'publish') ? 'draft' : 'live';
@@ -129,7 +160,7 @@ class Wp_Import {
 						}
 					}
 				}
-				
+
 				// Get tag slugs
 				$tag_slugs = array();
 				foreach($val->category as $tag)
@@ -166,19 +197,19 @@ class Wp_Import {
 						}
 					}
 
-					// Insert tags					
 					if(!empty($assign))
 					{
+						// Insert tags					
 						$this->ci->db->insert_batch('default_keywords_applied', $assign);	
-					}					
-				
+					}	
+									
 				}
 				
 				$posts[] = array(
 					'title' => (string) $val->title,
 					'slug' => $slug,
 					'category_id' => $category_id,
-					'intro' => (string) mb_convert_encoding($val->excerpt,"HTML-ENTITIES", "UTF-8"),
+					'intro' => $this->_truncate(nl2br((string) mb_convert_encoding($val->content,"HTML-ENTITIES", "UTF-8"))),
 					'body' => nl2br((string) mb_convert_encoding($val->content,"HTML-ENTITIES", "UTF-8")),
 					'parsed' => '',
 					'keywords' => $keywords_hash,
@@ -193,15 +224,26 @@ class Wp_Import {
 			}
 			
 		}
-		
+		/*foreach ($posts as &$post)
+		{
+			echo $post['title'] . ' | ' . $post['intro'];
+			echo '<br />';
+		}
+		//print_r($posts);
+		die();
+		*/
 		// Insert posts into the database
 		if($this->ci->db->insert_batch('default_blog', $posts))
 		{
 			return true;
 		}
 		else
-		{
+		{			
 			return false;
+		}
+		} catch (Exception $e) {
+			echo 'Exception ', $e->getMessage(), '\n';
+			die();
 		}
 
 	}
@@ -359,22 +401,39 @@ class Wp_Import {
 			}
 			
 		}
-
-		foreach($pages as $page)
+		if(!empty($pages))
 		{
-			$html = $page['html'];
-			unset($page['html']);
-			$this->ci->db->insert('default_pages',$page);
-			$chunk = array(
-				'page_id' => $this->ci->db->insert_id(),
-				'body' => $html,
-				'type' => 'html',
-				'parsed' => '',
-				'sort' => 1
-			);
-			$this->ci->db->insert('default_page_chunks',$chunk);
+			foreach($pages as $page)
+			{
+				$html = $page['html'];
+				unset($page['html']);
+				$this->ci->db->insert('default_pages',$page);
+				$chunk = array(
+					'page_id' => $this->ci->db->insert_id(),
+					'body' => $html,
+					'type' => 'html',
+					'parsed' => '',
+					'sort' => 1
+				);
+				$this->ci->db->insert('default_page_chunks',$chunk);
+			}
 		}
 
+	}
+
+	public function _truncate($text,$limit='100')
+	{
+		$text = strip_tags($text);
+		 if (strlen($text) > $limit) {
+          $words = str_word_count($text, 2);
+          $pos = array_keys($words);
+          if(count($pos) > $limit)
+          {
+          	$text = substr($text, 0, $pos[$limit]) . '...';	
+          }
+          
+      }
+      return $text;
 	}
 			
 }
