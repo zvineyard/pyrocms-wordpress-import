@@ -49,7 +49,7 @@ class Wp_Import {
 		}
 		if(!empty($categories))
 		{
-			if($this->ci->db->insert_batch('default_blog_categories', $categories))
+			if($this->ci->db->insert_batch('blog_categories', $categories))
 			{
 				return true;
 			}
@@ -72,7 +72,7 @@ class Wp_Import {
 		}
 		if(!empty($tags))
 		{
-			if($this->ci->db->insert_batch('default_keywords', $tags))
+			if($this->ci->db->insert_batch('keywords', $tags))
 			{
 				return true;
 			}
@@ -120,7 +120,7 @@ class Wp_Import {
 				{
 					$this->ci->db->where('slug',$category_slug);
 					$this->ci->db->limit(1);
-					$query = $this->ci->db->get('default_blog_categories');
+					$query = $this->ci->db->get('blog_categories');
 					if($query->num_rows() > 0)
 					{
 						foreach ($query->result() as $row)
@@ -153,7 +153,7 @@ class Wp_Import {
 					{
 						$this->ci->db->or_where('name',$v);
 					}
-					$query = $this->ci->db->get('default_keywords');
+					$query = $this->ci->db->get('keywords');
 					$assign = array();
 					if($query->num_rows() > 0)
 					{
@@ -169,7 +169,7 @@ class Wp_Import {
 					// Insert tags					
 					if(!empty($assign))
 					{
-						$this->ci->db->insert_batch('default_keywords_applied', $assign);	
+						$this->ci->db->insert_batch('keywords_applied', $assign);	
 					}					
 				
 				}
@@ -195,7 +195,7 @@ class Wp_Import {
 		}
 		
 		// Insert posts into the database
-		if($this->ci->db->insert_batch('default_blog', $posts))
+		if($this->ci->db->insert_batch('blog', $posts))
 		{
 			return true;
 		}
@@ -239,7 +239,7 @@ class Wp_Import {
 		}
 		
 		// Now that you have a comments array you can query all posts, and for each post, batch add comments (I know this hurts)
-		$query = $this->ci->db->get('default_blog');
+		$query = $this->ci->db->get('blog');
 		if($query->num_rows() > 0) {
 			foreach ($query->result() as $row)
 			{
@@ -252,7 +252,7 @@ class Wp_Import {
 						$comments[$row->slug][$counter]['module_id'] = $row->id;
 						$counter++;
 					}	
-					$this->ci->db->insert_batch('default_comments', $comments[$row->slug]);				
+					$this->ci->db->insert_batch('comments', $comments[$row->slug]);				
 				}				
 			}
 		}
@@ -289,7 +289,7 @@ class Wp_Import {
 			);
 			$this->ci->db->where('username',(string) $val->author_login);
 			$this->ci->db->or_where('email',(string) $val->author_email);
-			$query = $this->ci->db->get('default_users');
+			$query = $this->ci->db->get('users');
 			if($query->num_rows() == 0)
 			{
 				$this->ci->db->insert('users',$user);
@@ -301,7 +301,7 @@ class Wp_Import {
 					'last_name' => '[last_name]',
 					'lang' => 'en'
 				);
-				$this->ci->db->insert('default_profiles',$profile);
+				$this->ci->db->insert('profiles',$profile);
 			}
 		}
 	
@@ -364,7 +364,7 @@ class Wp_Import {
 		{
 			$html = $page['html'];
 			unset($page['html']);
-			$this->ci->db->insert('default_pages',$page);
+			$this->ci->db->insert('pages',$page);
 			$chunk = array(
 				'page_id' => $this->ci->db->insert_id(),
 				'body' => $html,
@@ -372,7 +372,7 @@ class Wp_Import {
 				'parsed' => '',
 				'sort' => 1
 			);
-			$this->ci->db->insert('default_page_chunks',$chunk);
+			$this->ci->db->insert('page_chunks',$chunk);
 		}
 
 	}
